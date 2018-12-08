@@ -1,0 +1,36 @@
+---
+- name: UPGRADE ROUTER FIRMWARE
+  hosts: asr2
+  connection: network_cli
+  gather_facts: no
+
+  tasks:
+    - name: GATHER ROUTER FACTS
+      ios_facts:
+
+    - name: SET BOOT SYSTEM FLASH
+      ios_config:
+        commands:
+          - "no boot system"
+          - "boot system flash bootflash:/asr1000rpx86-universalk9.16.09.02.SPA.bin"
+
+    - name: CHECK CONFIGURATION 
+      cli_command: 
+        command: show run | i boot 
+      register: cisco_output 
+
+    - name: PRINT OUTPUT TO SCREEN 
+      debug: 
+        var: cisco_output.stdout
+
+    - name: run commands that require answering a prompt
+      ios_command:
+        commands:
+          - wr mem
+
+    - name: run commands that require answering a prompt
+      ios_command:
+        commands:
+          - command: 'reload'
+            prompt: '[confirm]'
+            answer: "y"

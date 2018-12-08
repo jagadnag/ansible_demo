@@ -1,0 +1,19 @@
+---
+- name: AGNOSTIC PLAYBOOK 
+  hosts: asr1 
+  gather_facts: no 
+  connection: network_cli 
+  
+  tasks: 
+    - name: CONFIGURE DNS 
+      cli_config: 
+        config: ip name-server 8.8.8.8 
+
+    - name: CHECK CONFIGURATION 
+      cli_command: 
+        command: show run | i ip name-server 
+      register: cisco_output 
+
+    - name: PRINT OUTPUT TO SCREEN 
+      debug: 
+        var: cisco_output.stdout

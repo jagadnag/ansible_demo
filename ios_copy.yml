@@ -1,0 +1,13 @@
+---
+- name: CHECK FOR ACL THAT MATCHES RULE
+  hosts: asr1
+  connection: network_cli
+  gather_facts: no
+
+  tasks: 
+    - name: copy ios image
+      net_put: 
+        src: test.cfg
+        mode: binary
+        dest: bootflash:/
+        mode: sftp

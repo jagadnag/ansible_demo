@@ -1,0 +1,40 @@
+---
+- name: Router Configurations
+  hosts: cisco
+  gather_facts: no
+  vars:
+    dns_servers:
+      - 8.8.8.8
+      - 8.8.4.4
+  tasks:
+    - name: gather ios_facts
+      ios_facts:
+      register: version
+
+    ##Configuration for ASR1
+    - block:
+      - name: Static route from ASR1 to ASR3
+        net_static_route:
+          prefix: 3.3.3.0
+          mask: 255.255.255.0
+          next_hop: 10.0.0.2
+      - name: configure name servers
+        net_system:
+          name_servers: "{{item}}"
+        with_items: "{{dns_servers}}"
+      when:
+        - '"asr1" in inventory_hostname'
+
+    ##Configuration for R2
+    - block:
+      - name: Static route from ASR3 to ASR1
+        net_static_route:
+          prefix: 1.1.1.0
+          mask: 255.255.255.0
+          next_hop: 10.0.0.1
+      - name: configure name servers
+        net_system:
+          name_servers: "{{item}}"
+        with_items: "{{dns_servers}}"
+      when:
+        - '"asr3" in inventory_hostname'

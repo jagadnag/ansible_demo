@@ -1,0 +1,26 @@
+---
+- hosts: asr1
+  name: GRE tunnel configuration
+  gather_facts: no
+
+  tasks:
+  - name: create tunnel interface to ASR3
+    ios_config:
+      lines:
+       - ip address 10.0.0.1 255.255.255.0
+       - tunnel source 10.77.77.2
+       - tunnel destination 10.77.77.1
+      parents: interface Tunnel 100
+
+- hosts: asr3
+  name: GRE tunnel configuration
+  gather_facts: no
+
+  tasks:
+  - name: create tunnel interface to ASR1
+    ios_config:
+      lines:
+       - ip address 10.0.0.2 255.255.255.0
+       - tunnel source 10.77.77.1
+       - tunnel destination 10.77.77.2
+      parents: interface Tunnel 100    

@@ -1,0 +1,16 @@
+---
+- hosts: asr1
+  name: backup router configurations
+  gather_facts: no
+
+  tasks:
+  - name: gather ios_facts
+    ios_facts:
+    register: facts
+
+  - debug:
+      msg: "{{facts}}"
+
+  - name: Backup configuration
+    ios_config:
+      backup: yes
